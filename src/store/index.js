@@ -22,7 +22,21 @@ export default new Vuex.Store({
       state.vueContributorsNames = payload;
     },
     setUrlsToWatch(state, payload) {
-      state.urlsToWatch = payload;
+      let urlsWatchingJSON;
+      let urlsWatchingArray;
+
+      if(typeof payload === "string") {
+        urlsWatchingJSON = payload;
+        urlsWatchingArray = payload ? JSON.parse(payload) : [];
+
+      } else {
+        urlsWatchingArray = payload;
+        urlsWatchingJSON = JSON.stringify(payload);
+      }
+
+      window.localStorage.setItem("urls-watching", urlsWatchingJSON);
+      
+      state.urlsToWatch = urlsWatchingArray;
     },
   },
   actions: {
@@ -38,15 +52,30 @@ export default new Vuex.Store({
         });
     },
     async getInstantUrlsWatchingState({ commit }) {
-      const urlsWatching = window.localStorage.getItem("urls-watching");
+      let urlsWatching = window.localStorage.getItem("urls-watching");
 
-      if(urlsWatching?.length) {
-        await axios
-          .get("https://localhost/")
-          .then(({ data: repos }) => commit("setUserRepos", repos));
-      }
+      // if (urlsWatching?.length) {
+      //   await axios
+      //     .get("https://localhost/")
+      //     .then(({ data: repos }) => commit("setUserRepos", repos));
+      // }
 
-      commit("setUrlsToWatch", urlsWatching ?? []);
+      commit("setUrlsToWatch", urlsWatching);
+    },
+    removeFromWatchList({ commit }, payload) {
+      let urlsWatching = window.localStorage.getItem("urls-watching");
+
+      console.log("tentando deletar", urlsWatching)
+      urlsWatching = urlsWatching ? JSON.parse(urlsWatching) : [];
+      urlsWatching = urlsWatching.filter((site, index) => index != payload);
+
+      // if (urlsWatching?.length) {
+      //   await axios
+      //     .get("https://localhost/")
+      //     .then(({ data: repos }) => commit("setUserRepos", repos));
+      // }
+
+      commit("setUrlsToWatch", urlsWatching);
     },
     monitUrlsWatchingState({ commit }) {
       const urlsWatching = window.localStorage.getItem("urls-watching");

@@ -16,7 +16,7 @@ export default {
   },
   created() {
     this.getInstantUrlsWatchingState();
-    this.monitUrlsWatchingState();
+    // this.monitUrlsWatchingState();
   },
 };
 </script>
@@ -26,6 +26,10 @@ export default {
   font-family: "Shippori Antique B1", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  min-height: 100vh;
+  
+  background-color: #272a37;
   color: #2c3e50;
 }
 

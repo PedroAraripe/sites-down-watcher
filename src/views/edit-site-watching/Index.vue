@@ -3,9 +3,13 @@
     <main style="color: green; display: flex; flex-direction: column">
       Adicionar novo site para monitorar
 
-      <form @submit.prevent="createSiteToWatch">   
+      <form @submit.prevent="createSiteToWatch">
         <input v-model="newSiteUrl" placeholder="Site url" />
-        <input v-model="newSiteName" placeholder="Site name" @keyup.enter="createSiteToWatch" />
+        <input
+          v-model="newSiteName"
+          placeholder="Site name"
+          @keyup.enter="createSiteToWatch"
+        />
       </form>
       <div>
         {{ urlsToWatch }}
@@ -14,7 +18,6 @@
   </section>
 </template>
 <script>
-
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -26,22 +29,21 @@ export default {
     };
   },
   computed: {
-    ...mapState(["urlsToWatch"])
+    ...mapState(["urlsToWatch"]),
   },
   methods: {
     ...mapActions(["addUrlToWatch"]),
     createSiteToWatch() {
-      if(this.newSiteUrl) {
+      if (this.newSiteUrl) {
         const site_url = this.newSiteUrl;
         const site_name = this.newSiteName ?? this.siteUrl;
 
         this.addUrlToWatch({
           site_url,
           site_name,
-        })
-
+        });
       }
-    }
+    },
   },
 };
 </script>

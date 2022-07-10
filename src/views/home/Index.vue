@@ -1,181 +1,129 @@
 <template>
   <section>
     <main style="color: green; display: flex; flex-direction: column">
-      Adicionar novo site para monitorar
+      <div v-if="urlsToWatch && urlsToWatch.length" class="row mx-0">
+        <div class="col-lg-6 px-0 sites-list-col d-flex flex-column">
+          <sites-status :sites-infos="urlsToWatch" class="flex-grow-1" />
+          
+          <button
+            @click="dialog = true"
+            class="btn w-100 bg-white dialog-start-button"
+          >
+            <font-awesome-icon
+              icon="fa-circle-plus"
+              class="h4 mb-0 text-success"
+            />
 
-      <form @submit.prevent="createSiteToWatch">   
-        <input v-model="newSiteUrl" placeholder="Site url" />
-        <input v-model="newSiteName" placeholder="Site name" @keyup.enter="createSiteToWatch" />
-      </form>
-
-      <div>
-        {{ urlsToWatch }}
+          </button>
+        </div>
       </div>
-      
+
+    <div data-app>
+      <v-dialog
+        transition="dialog-bottom-transition"
+        max-width="600"
+        v-model="dialog"
+      >
+        <template>
+          <v-card>
+            <v-toolbar
+              color="primary"
+              dark
+            >
+              Add new site to watch
+            </v-toolbar>
+
+            <v-card-text>
+              <form @submit.prevent="createSiteToWatch" class="pt-5 pb-4 d-flex flex-column">
+                <input v-model="newSiteUrl" placeholder="Site url" class="mb-3" />
+
+                <input
+                  v-model="newSiteName"
+                  placeholder="Site name"
+                  @keyup.enter="createSiteToWatch"
+                />
+              </form>
+            </v-card-text>
+            <v-card-actions>
+              <div class="w-100 d-flex align-items-center justify-content-between">
+                <v-btn
+                  text
+                  class="flex-grow-1"
+                  @click="dialog = false"
+                >
+                  Close
+                </v-btn>
+
+                <v-btn
+                  text
+                  class="flex-grow-1 bg-success text-white"
+                  @click="createSiteToWatch"
+                >
+                  Save
+                </v-btn>
+              </div>
+            </v-card-actions>
+          </v-card>
+        </template>
+        
+      </v-dialog>
+    </div>
     </main>
   </section>
 </template>
 <script>
 
 import { mapState, mapActions } from "vuex";
+import SitesStatus from "../components/SitesStatus.vue";
 
 export default {
+  components: {
+    SitesStatus
+  },
   data() {
     return {
+      dialog: false,
       sitesWatching: [],
       newSiteUrl: "",
       newSiteName: "",
     };
   },
   computed: {
-    ...mapState(["urlsToWatch"])
+    ...mapState(["urlsToWatch"]),
   },
   methods: {
     ...mapActions(["addUrlToWatch"]),
     createSiteToWatch() {
-      if(this.newSiteUrl) {
+      if (this.newSiteUrl) {
         const site_url = this.newSiteUrl;
         const site_name = this.newSiteName ?? this.siteUrl;
 
         this.addUrlToWatch({
           site_url,
           site_name,
-        })
-
+        });
       }
-    }
+
+      this.dialog = false;
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
-section {
-  position: relative;
-  overflow: hidden;
+  .sites-list-col {
+    min-height: 100vh;
+    background-color: white;
 
-  .moving-texts {
-    position: absolute;
-    z-index: 0;
-  }
-
-  .card-wrapper-login {
-    z-index: 1;
-  }
-
-  min-height: 100vh;
-  background-color: rgb(10, 10, 10);
-
-  & main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 100vh;
-    max-width: 100vw;
-    overflow: hidden;
-
-    background-color: #272a37;
-  }
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  padding: 1rem;
-
-  & > h1 {
-    font-size: 2rem;
-    color: #aeeac9;
-    margin-bottom: 2.3rem;
-    text-transform: uppercase;
-    text-align: center;
-
-    @media (min-width: 992px) {
-      text-align: start;
-      font-size: 2.5rem;
-      margin-bottom: 1.3rem;
+    .dialog-start-button {
+      border-radius: initial;
+      border-top: 1px solid #0000002e;
     }
   }
-
-  & .wrapper-inputs {
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    @media (min-width: 992px) {
-      flex-direction: row;
-    }
-
-    & input {
-      width: 100%;
-
-      padding: 1rem;
-      margin-bottom: 2.5rem;
-
-      border: 1px solid #aeeac9;
-      outline: none;
-      border-radius: 10px;
-      background-color: #323644;
-      color: #aeeac9;
-
-      @media (min-width: 992px) {
-        flex-grow: 1;
-        min-width: 300px;
-        margin-right: 2rem;
-        margin-bottom: 0rem;
-        font-size: 20px;
-      }
-    }
-
-    & button {
-      width: 100%;
-
-      padding: 1rem 2rem;
-      font-size: 1rem;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      background-color: #21262d;
-      color: #63e99f;
-      border: 1px solid #63e99f;
-      border-radius: 5px;
-
-      transition: all 0.3s;
-
-      @media (min-width: 992px) {
-        width: fit-content;
-        font-size: 20px;
-      }
-
-      &:hover {
-        background-color: #2d534a;
-        box-shadow: 0 0 30px hsl(215deg 30% 23%);
-      }
+    
+  form {
+    & > * {
+      border-bottom: 1px solid black;
+      padding: 0.3rem
     }
   }
-
-  &.no-user-found {
-    & ::placeholder {
-      /* Chrome, Firefox, Opera, Safari 10.1+ */
-      color: #e33636;
-      opacity: 1; /* Firefox */
-    }
-
-    & :-ms-input-placeholder {
-      /* Internet Explorer 10-11 */
-      color: #e33636;
-    }
-
-    & ::-ms-input-placeholder {
-      /* Microsoft Edge */
-      color: #e33636;
-    }
-  }
-}
 </style>
