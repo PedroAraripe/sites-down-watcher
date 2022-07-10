@@ -9,7 +9,7 @@ export default new Vuex.Store({
     user: null,
     userRepos: null,
     vueContributorsNames: null,
-    urlsToWatch: null,
+    urlsToWatch: [],
   },
   mutations: {
     setUser(state, payload) {
@@ -84,8 +84,8 @@ export default new Vuex.Store({
     },
     addUrlToWatch({ commit }, payload) {
       let urlsWatching = window.localStorage.getItem("urls-watching");
-      urlsWatching = urlsWatching ? JSON.parse(urlsWatching) : [];
-
+      
+      urlsWatching = urlsWatching && urlsWatching != "null" ? JSON.parse(urlsWatching) : [];
       urlsWatching.push(payload);
       urlsWatching = JSON.stringify(urlsWatching);
 

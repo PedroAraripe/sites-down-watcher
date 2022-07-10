@@ -1,9 +1,12 @@
 <template>
   <section>
     <main style="color: green; display: flex; flex-direction: column">
-      <div v-if="urlsToWatch && urlsToWatch.length" class="row mx-0">
+      <div class="row mx-0">
         <div class="col-lg-6 px-0 sites-list-col d-flex flex-column">
-          <sites-status :sites-infos="urlsToWatch" class="flex-grow-1" />
+          <sites-status v-if="urlsToWatch" :sites-infos="urlsToWatch" class="flex-grow-1" />
+          <div v-else class="flex-grow-1 p-4 h4 text-center">
+            Looks like you don't have any sites watching yet, starting adding one!
+          </div>
           
           <button
             @click="dialog = true"
@@ -18,6 +21,7 @@
         </div>
       </div>
 
+    </main>
     <div data-app>
       <v-dialog
         transition="dialog-bottom-transition"
@@ -65,10 +69,8 @@
             </v-card-actions>
           </v-card>
         </template>
-        
       </v-dialog>
     </div>
-    </main>
   </section>
 </template>
 <script>
@@ -88,8 +90,20 @@ export default {
       newSiteName: "",
     };
   },
+  watch: {
+    sitesWatchingLength: {
+      handler(newValue) {
+        if(!newValue) {
+          this.dialog = true;
+        }
+      }
+    }
+  },
   computed: {
     ...mapState(["urlsToWatch"]),
+    sitesWatchingLength() {
+      return this.urlsToWatch?.length;
+    }
   },
   methods: {
     ...mapActions(["addUrlToWatch"]),
